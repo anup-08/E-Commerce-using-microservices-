@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: ${url}
+    username: root
+    password: ${db_password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Microservice-Realm
+
+
+server:
+  port: 8081
+
+#Keycloak config
+keycloak:
+  server-url: http://localhost:8080
+  realm: Microservice-Realm
+  client-id: userSerive
+  client-secret: ${secret}
+
+#for creating user
+  admin-username: ${username}
+  admin-password: ${password}
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client: debug
+        security: trace
