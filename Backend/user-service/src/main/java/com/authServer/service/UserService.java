@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +23,17 @@ public class UserService {
     private final UserRepo repo;
     private  final KeycloakService keycloakService;
 
-    public UserResponse registerUser(UserRequest request) {
-        String keycloakId = null;
-        try{
-            keycloakId = keycloakService.registerInKeycloak(request);
+    public UserResponse registerUser(UserRequest request){
 
-            UserRepresentation keycloakUser = keycloakService.findUserById(keycloakId);
-            List<String> getRole = keycloakService.getUserRole(keycloakId);
+        UserRepresentation keycloakUser = null;
+
+        try{
+            keycloakUser = keycloakService.registerInKeycloak(request);
+            String keycloakId= keycloakUser.getId();
 
             User user = User.builder()
                     .keyCloakId(keycloakId)
                     .build();
-
 
             if(request.getContact() != null){
                 Contact contact = Contact.builder()
@@ -57,13 +58,13 @@ public class UserService {
                         ).toList();
                 user.setAddresses(addresses);
             }
-
-            return convertToResponse(repo.save(user) , keycloakUser , getRole);
+            String getRole = Optional.ofNullable(request.getRole()).orElse("USER").toUpperCase();
+            return convertToResponse(repo.save(user) , keycloakUser , List.of(getRole));
 
         } catch (Exception e) {
-            if ( keycloakId != null) {
+            if ( keycloakUser != null && keycloakUser.getId() != null) {
                 // Rollback the Keycloak user creation
-                keycloakService.deleteUser(keycloakId);
+                keycloakService.deleteUser(keycloakUser.getId());
             }
             throw new RuntimeException("Failed to register user. The operation was rolled back.", e);
         }

@@ -28,10 +28,6 @@ keycloak:
   client-id: userSerive
   client-secret: ${secret}
 
-#for creating user
-  admin-username: ${username}
-  admin-password: ${password}
-
 logging:
   level:
     org:

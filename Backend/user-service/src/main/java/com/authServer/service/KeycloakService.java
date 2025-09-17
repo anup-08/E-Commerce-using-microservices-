@@ -3,11 +3,8 @@ package com.authServer.service;
 import com.example.dtoRequest.UserRequest;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -15,40 +12,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class KeycloakService {
 
-    @Value("${keycloak.server-url}")
-    private String serverUrl;
+
     @Value("${keycloak.realm}")
     private String realm;
-    @Value("${keycloak.client-id}")
-    private String clientId;
-    @Value("${keycloak.client-secret}")
-    private String clientSecret;
-    @Value("${keycloak.admin-username}")
-    private String adminUserName;
-    @Value("${keycloak.admin-password}")
-    private String adminPassword;
 
     //1.Get a keycloak client logged in as an admin
-    private Keycloak getAdminKeyCloak(){
-        return KeycloakBuilder.builder()
-                .serverUrl(serverUrl)
-                .realm("master")
-                .grantType(OAuth2Constants.PASSWORD)
-                .clientId("admin-cli")
-                .username(adminUserName)
-                .password(adminPassword)
-                .build();
-    }
+    private final Keycloak getAdminKeycloak;
+
 
     //2.Signup new user and assign role
-    public String registerInKeycloak(UserRequest request) {
-        Keycloak keycloak = getAdminKeyCloak();
+    public UserRepresentation registerInKeycloak(UserRequest request) {
 
         // To create new user
         UserRepresentation user = new UserRepresentation();
@@ -72,7 +50,7 @@ public class KeycloakService {
         user.setCredentials(Collections.singletonList(password));
 
         // Send Response To keyClock
-        Response response = keycloak.realm(realm).users().create(user);
+        Response response = getAdminKeycloak.realm(realm).users().create(user);
         if(response.getStatus() != 201){
             throw new IllegalArgumentException("Failed to create user : " + response.getStatusInfo());
         }
@@ -88,31 +66,32 @@ public class KeycloakService {
             role = request.getRole().toUpperCase();
         }
 
-        RoleRepresentation setRole = keycloak.realm(realm).roles()
-                .get(role)
-                .toRepresentation();
-        keycloak.realm(realm).users().get(userId).roles().realmLevel().add(Collections.singletonList(setRole));
+        try{
+            RoleRepresentation setRole = getAdminKeycloak.realm(realm).roles()
+                    .get(role)
+                    .toRepresentation();
+            getAdminKeycloak.realm(realm).users().get(userId).roles().realmLevel().add(Collections.singletonList(setRole));
+        } catch (Exception e) {
+            deleteUser(userId);
+            throw new IllegalArgumentException("unable to assign the role "+e);
+        }
 
-        return userId;
+        return findUserById(userId);
     }
 
     public UserRepresentation findUserById(String id){
-        Keycloak keycloak = getAdminKeyCloak();
-        return keycloak.realm(realm).users().get(id).toRepresentation();
+        return getAdminKeycloak.realm(realm).users().get(id).toRepresentation();
     }
 
-    public List<String> getUserRole(String userId){
-        Keycloak keycloak = getAdminKeyCloak();
-
-        List<RoleRepresentation> representations = keycloak.realm(realm).users()
-                .get(userId).roles().realmLevel().listEffective();
-
-        return representations.stream().map(RoleRepresentation::getName) // role -> role.getName()
-                .collect(Collectors.toList());
-    }
+//    public List<String> getUserRole(String userId){
+//        List<RoleRepresentation> representations = getAdminKeycloak.realm(realm).users()
+//                .get(userId).roles().realmLevel().listEffective();
+//
+//        return representations.stream().map(RoleRepresentation::getName) // role -> role.getName()
+//                .collect(Collectors.toList());
+//    }
 
     public void deleteUser(String id){
-        Keycloak keycloak = getAdminKeyCloak();
-        keycloak.realm(realm).users().get(id).remove();
+        getAdminKeycloak.realm(realm).users().get(id).remove();
     }
 }
