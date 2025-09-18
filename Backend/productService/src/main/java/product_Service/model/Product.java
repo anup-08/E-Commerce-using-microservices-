@@ -57,6 +57,7 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @CreatedBy
+    @Indexed
     @NotNull(message = "Try to login again...!")
     private String createdBy;
     private String createdByUsername;

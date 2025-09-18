@@ -1,0 +1,60 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: api-gateway
+
+  # --- OAuth2 Security Configuration ---
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Microservice-Realm
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: user-service
+            secret: ${secret}
+            scope:
+              - openid,
+              - profile,
+              - email
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:9000/login/oauth2/code/keycloak
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/Microservice-Realm
+
+  # --- Spring Cloud Gateway Routes (Using Modern Properties) ---
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service-route
+              uri: lb://user-service
+              predicates:
+                - Path=/auth/**
+
+            - id: product-service-route
+              uri: lb://productService
+              predicates:
+                - Path=/product/**
+
+# --- Eureka Client Configuration ---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    instance-id: Api-Gateway:localhost:9000
+
+# --- Logging Configuration ---
+logging:
+  level:
+    org.springframework.security: info
+    org.springframework.web.client: info

@@ -24,6 +24,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/    # optional
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    instance-id: user-Server:localhost:8081
 server:
   port: 8081
 
@@ -31,7 +36,7 @@ server:
 keycloak:
   server-url: http://localhost:8080
   realm: Microservice-Realm
-  client-id: userSerive
+  client-id: user-service
   client-secret: ${secret}
 
 logging:

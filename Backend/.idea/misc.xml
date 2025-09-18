@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/commonDTOS/pom.xml" />
         <option value="$PROJECT_DIR$/productService/pom.xml" />
         <option value="$PROJECT_DIR$/eurekaServer/pom.xml" />
+        <option value="$PROJECT_DIR$/apiGateway/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

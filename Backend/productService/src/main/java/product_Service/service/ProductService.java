@@ -1,6 +1,8 @@
 package product_Service.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -77,9 +79,9 @@ public class ProductService {
 
     }
 
-    public List<ProductResponse> getAllProductDetails(){
-        List<Product> products = repo.findAll();
-        return products.stream().map(product -> convertToProductResponse(product)).toList();
+    public Page<ProductResponse> getAllProductDetails(Pageable pageable){
+        Page<Product> products = repo.findAll(pageable);
+        return products.map(this::convertToProductResponse); // Use a cleaner method reference
     }
 
     public ProductResponse getProductById(String productId) {
