@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: cartService
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/e-commerce
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Microservice-Realm
+
+
+  cloud:
+    compatibility-verifier:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/    # optional
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    instance-id: cartService:localhost:8083
+
+server:
+  port: 8083
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client: debug
+        security: trace

@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/productService/pom.xml" />
         <option value="$PROJECT_DIR$/eurekaServer/pom.xml" />
         <option value="$PROJECT_DIR$/apiGateway/pom.xml" />
+        <option value="$PROJECT_DIR$/cartService/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
