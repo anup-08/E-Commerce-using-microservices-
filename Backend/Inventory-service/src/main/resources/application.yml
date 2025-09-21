@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: Inventory-service
+
+  datasource:
+    url: ${url}
+    password: ${dbPassword}
+    username: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  cloud:
+    compatibility-verifier:
+      enabled: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Microservice-Realm
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/    # optional
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    instance-id: inventory-Server:localhost:8084
+
+
+server:
+  port: 8084
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client: debug
+        security: trace

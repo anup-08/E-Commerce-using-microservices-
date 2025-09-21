@@ -48,6 +48,11 @@ spring:
               predicates:
                   - Path=/cart/**
 
+            - id: inventory-service
+              uri: lb://Inventory-service
+              predicates:
+                - Path=/inventory/**
+
 # --- Eureka Client Configuration ---
 eureka:
   client:
