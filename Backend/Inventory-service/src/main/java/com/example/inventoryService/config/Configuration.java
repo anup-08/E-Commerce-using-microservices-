@@ -37,18 +37,21 @@ public class Configuration {
 
     @Bean
     public Converter<Jwt, AbstractAuthenticationToken> abstractAuthenticationTokenConverter(){
-        return jwt -> {
-            Map<String , Object> realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
+        return new Converter<Jwt, AbstractAuthenticationToken>() {
+            @Override
+            public AbstractAuthenticationToken convert(Jwt jwt) {
+                Map<String , Object> realmAccess = (Map<String, Object>) jwt.getClaims().get("realm_access");
 
-            if(realmAccess == null || realmAccess.get("roles") == null){
-                return new JwtAuthenticationToken(jwt, List.of());
+                if(realmAccess == null || realmAccess.get("roles") == null){
+                    return new JwtAuthenticationToken(jwt, List.of());
+                }
+
+                Collection<String> roles = (Collection<String>) realmAccess.get("roles");
+                List<GrantedAuthority> gAuth = roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_"+role))
+                        .collect(Collectors.toList());
+
+                return new  JwtAuthenticationToken(jwt , gAuth , jwt.getSubject());
             }
-
-            Collection<String> roles = (Collection<String>) realmAccess.get("roles");
-            List<GrantedAuthority> gAuth = roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_"+role))
-                    .collect(Collectors.toList());
-
-            return new  JwtAuthenticationToken(jwt , gAuth , jwt.getSubject());
         };
     }
 }

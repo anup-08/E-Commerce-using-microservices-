@@ -17,4 +17,6 @@ public interface InventoryRepo extends JpaRepository<Inventory , Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Inventory> findBySkuIn(List<String> skus);
+
+    List<Inventory> findAllByProductIdIn(List<String> productId);
 }

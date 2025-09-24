@@ -52,6 +52,11 @@ public class Controller {
         return ResponseEntity.ok(service.getUserProductList(userId));
     }
 
+    @GetMapping("/getAllProducts")
+    public ResponseEntity<List<ProductResponse>> getALLProductDetails(@RequestBody List<String> productIds){
+        return ResponseEntity.ok(service.getAllProductById(productIds));
+    }
+
     @GetMapping("/get/{productId}")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable String productId){
         return ResponseEntity.ok(service.getProductById(productId));

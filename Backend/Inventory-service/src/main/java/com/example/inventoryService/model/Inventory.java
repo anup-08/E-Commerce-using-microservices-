@@ -26,13 +26,13 @@ public class Inventory {
     private String sku;
 
     @Builder.Default
-    private long totalQuantity = 0;
+    private Integer totalQuantity = 0;
 
     @Builder.Default
-    private long reservedQuantity = 0;
+    private Integer reservedQuantity = 0;
 
     @Transient // Explicitly tells JPA to ignore this field for persistence
-    public long getAvailableQuantity() {
+    public Integer getAvailableQuantity() {
         return this.totalQuantity - this.reservedQuantity;
     }
 

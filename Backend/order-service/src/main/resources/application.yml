@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    username: root
+    url: ${url}
+    password: ${db_password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  cloud:
+    compatibility-verifier:
+      enabled: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Microservice-Realm
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/    # optional
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    instance-id: order-Server:localhost:8085
+
+server:
+  port: 8085
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client: debug
+        security: trace
+

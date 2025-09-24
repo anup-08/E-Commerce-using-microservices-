@@ -30,6 +30,7 @@
         </processorPath>
         <module name="cartService" />
         <module name="Inventory-service" />
+        <module name="order-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -43,6 +44,7 @@
       <module name="cartService" options="-parameters" />
       <module name="commonShareCode" options="-parameters" />
       <module name="eurekaServer" options="-parameters" />
+      <module name="order-service" options="-parameters" />
       <module name="productService" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

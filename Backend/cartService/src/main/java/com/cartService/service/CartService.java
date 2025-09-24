@@ -11,6 +11,7 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class CartService {
 
     private final CartRepository repo;
     private final ProductFeignClient feignClient;
+
 
     @PreAuthorize("hasRole('USER')")
     public CartResponse addToCart(AddItemRequest request, String userId) {
@@ -45,6 +47,7 @@ public class CartService {
             }
             CartItem cartItem = CartItem.builder()
                     .productId(request.getProductId())
+                    .sku(response.getSku())
                     .quantity(request.getQuantity())
                     .price(response.getPrice())
                     .productName(response.getProductName())
@@ -93,6 +96,7 @@ public class CartService {
         return convertToCartResponse(repo.save(cart));
     }
 
+    @Transactional
     @PreAuthorize("hasRole('USER')")
     public CartResponse clearCart(String userId) {
         Cart cart = repo.findByUserId(userId)
@@ -135,6 +139,7 @@ public class CartService {
     private CartItemResponseDto itemToResponse(CartItem item) {
         return CartItemResponseDto.builder()
                 .productId(item.getProductId())
+                .sku(item.getSku())
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .productName(item.getProductName())

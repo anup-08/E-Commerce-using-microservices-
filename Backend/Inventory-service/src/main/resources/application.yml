@@ -21,6 +21,17 @@ spring:
         jwt:
           issuer-uri: http://localhost:8080/realms/Microservice-Realm
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: inventory-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.inventoryService.dto
+
+
+
 eureka:
   client:
     service-url:

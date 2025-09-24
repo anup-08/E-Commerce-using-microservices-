@@ -19,5 +19,5 @@ public class InventoryRequest {
 
     @NotNull(message = "Available quantity cannot be null.")
     @Min(value = 0, message = "Available quantity cannot be negative.")
-    private Long quantity ;
+    private Integer quantity ;
 }

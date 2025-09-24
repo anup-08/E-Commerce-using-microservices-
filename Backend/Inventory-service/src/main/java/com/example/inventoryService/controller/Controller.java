@@ -21,7 +21,9 @@ public class Controller {
 
     @PostMapping("/reservations")
     public ResponseEntity<String> reserveStock(@Valid @RequestBody List<InventoryRequest> request) throws NotEnoughStockException {
+        System.out.println("enter");
         service.reserveStock(request);
+        System.out.println("out");
         return ResponseEntity.ok("Stock reserve Successfully");
     }
 
@@ -31,7 +33,7 @@ public class Controller {
         return  ResponseEntity.ok(service.isAvailable(sku,quantity));
     }
 
-    @PostMapping("/reservations/cancellation")
+    @PostMapping("/release/stock")
     public ResponseEntity<String> releaseStock(@Valid @RequestBody List<InventoryRequest> request){
         service.releaseStock(request);
         return ResponseEntity.ok("Stock Release successfully");
@@ -46,5 +48,10 @@ public class Controller {
     @PostMapping("/add/stock")
     public ResponseEntity<List<InventoryResponse>> addStock(@Valid @RequestBody List<InventoryRequest> requests){
         return new ResponseEntity<>(service.addStock(requests) , HttpStatus.CREATED);
+    }
+
+    @PostMapping("/get/all/details")
+    public ResponseEntity<List<InventoryResponse>> getAllDetails(@RequestBody List<String> productId){
+        return ResponseEntity.ok(service.getStockDetails(productId));
     }
 }

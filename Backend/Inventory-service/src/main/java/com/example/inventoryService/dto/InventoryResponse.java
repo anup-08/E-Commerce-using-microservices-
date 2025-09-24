@@ -15,8 +15,8 @@ public class InventoryResponse {
     private Long inventoryId;
     private String productId;
     private String sku;
-    private long totalQuantity;
-    private long reservedQuantity;
+    private Integer totalQuantity;
+    private Integer reservedQuantity;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

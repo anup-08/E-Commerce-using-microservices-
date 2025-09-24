@@ -15,6 +15,8 @@ import product_Service.model.Product;
 import product_Service.repo.ProductRepo;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +91,30 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFound("Product doesn't exist..!"));
         return convertToProductResponse(product);
     }
+
+    public List<ProductResponse> getAllProductById( List<String> productIds) {
+        List<Product> foundProducts = repo.findAllById(productIds);
+
+        if (foundProducts.size() != productIds.size()) {
+
+            Set<String> foundProductIds = foundProducts.stream()
+                    .map(Product::getProductId)
+                    .collect(Collectors.toSet());
+
+
+            List<String> missingIds = productIds.stream()
+                    .filter(id -> !foundProductIds.contains(id))
+                    .toList();
+
+            throw new ProductNotFound("Products not found with IDs: " + missingIds);
+        }
+
+        return foundProducts.stream()
+                .map(this::convertToProductResponse)
+                .toList();
+    }
+
+
 
     private ProductResponse convertToProductResponse(Product product){
         return ProductResponse.builder()

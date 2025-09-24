@@ -26,4 +26,6 @@ public class CartItem {
     private BigDecimal price;
 
     private String productName;
+    @NotBlank(message = "sku cannot be empty.")
+    private String sku;
 }
